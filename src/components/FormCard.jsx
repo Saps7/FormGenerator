@@ -3,7 +3,7 @@ import { Card, Form, Button, Modal } from 'react-bootstrap';
 import { RenderFormField } from './RenderFormField';
 import { validateField } from '../utils/validationUtils';
 
-const FormCard = ({ form, onDelete }) => {
+const FormCard = ({ form, onDelete, onBack }) => {
   const [formValues, setFormValues] = useState({});
   const [formErrors, setFormErrors] = useState({});
   const [showSubmitModal, setShowSubmitModal] = useState(false);
@@ -57,8 +57,14 @@ const FormCard = ({ form, onDelete }) => {
     }
   };
 
+  const handleModalSubmit = () => {
+    setShowSubmitModal(false);
+    onBack();
+  };
+
   const handleCloseSubmitModal = () => {
     setShowSubmitModal(false);
+    onBack();
   };
 
   const handleShowJsonModal = () => {
@@ -152,8 +158,8 @@ const FormCard = ({ form, onDelete }) => {
           {renderFormData()}
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseSubmitModal}>
-            Close
+          <Button variant="secondary" onClick={handleModalSubmit}>
+            Submit Form
           </Button>
         </Modal.Footer>
       </Modal>

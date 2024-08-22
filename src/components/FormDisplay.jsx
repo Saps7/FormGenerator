@@ -8,7 +8,7 @@ const FormDisplay = ({ form, onBack, onDelete }) => {
       <Button variant="secondary" onClick={onBack} className="my-3">
         Back to Form List
       </Button>
-      <FormCard form={form} onDelete={onDelete} />
+      <FormCard form={form} onDelete={onDelete} onBack={onBack} />
     </Container>
   );
 };
