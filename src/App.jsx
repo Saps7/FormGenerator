@@ -3,7 +3,6 @@ import CreateForm from './components/CreateForm'
 import FormList from './components/FormList'
 import { FormProvider } from './context/FormContext'
 import { Container, Row, Col } from 'react-bootstrap'
-import './App.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
 
 function App() {
