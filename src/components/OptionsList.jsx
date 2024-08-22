@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { ListGroup, Button, InputGroup, FormControl } from 'react-bootstrap';
 
 const OptionsList = ({ options, setOptions }) => {
   const [newOption, setNewOption] = useState('');
@@ -17,23 +18,23 @@ const OptionsList = ({ options, setOptions }) => {
 
   return (
     <div>
-      <ul>
+      <ListGroup>
         {options.map((option, index) => (
-          <li key={index}>
+          <ListGroup.Item key={index} className="d-flex justify-content-between align-items-center">
             {option}
-            <button type="button" onClick={() => handleRemoveOption(index)}>Remove</button>
-          </li>
+            <Button variant="danger" size="sm" onClick={() => handleRemoveOption(index)}>Remove</Button>
+          </ListGroup.Item>
         ))}
-      </ul>
-      <div>
-        <input
+      </ListGroup>
+      <InputGroup className="mt-3">
+        <FormControl
           type="text"
           value={newOption}
           onChange={(e) => setNewOption(e.target.value)}
           placeholder="Enter new option"
         />
-        <button type="button" onClick={handleAddOption}>+ Add another option</button>
-      </div>
+        <Button variant="primary" onClick={handleAddOption}>+ Add option</Button>
+      </InputGroup>
     </div>
   );
 };

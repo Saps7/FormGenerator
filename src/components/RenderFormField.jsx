@@ -1,58 +1,73 @@
-export const RenderFormField = (label, fieldType, fieldOptions) => {
-    if (fieldType.type === "text") {
-      return (
-        <>
-          <input
+import React from 'react';
+import { Form, Col } from 'react-bootstrap';
+
+export const RenderFormField = (label, fieldType, fieldOptions, required, onChange) => {
+  const commonProps = {
+    name: label,
+    required: required,
+    onChange: onChange
+  };
+
+  const renderField = () => {
+    switch (fieldType) {
+      case "text":
+        return (
+          <Form.Control
             type="text"
-            id={label}
-            name={label}
-            required={fieldType.required}
+            placeholder={`Enter ${label.toLowerCase()}`}
+            {...commonProps}
           />
-          <label htmlFor={label}>{label}</label>
-        </>
-      );
-    } else if (fieldType.type === "dropdown") {
-      return (
-        <div>
-          <label htmlFor={label}>Select a {label}</label>
-          <select
-            style={{ marginBottom: "20px" }}
-            id={label}
-            name={label}
-            required={fieldType.required}
-          >
-            <option value="">Select a {label}</option>
+        );
+      case "dropdown":
+        return (
+          <Form.Select {...commonProps}>
+            <option value="">Select {label.toLowerCase()}</option>
             {fieldOptions.map((option) => (
               <option key={option} value={option}>
                 {option}
               </option>
             ))}
-          </select>
-        </div>
-      );
-    } else if (fieldType.type === "radio") {
-      return (
-        <div>
-          <input
-            type="radio"
-            id={label}
-            name={label}
-            value={fieldType.label}
-          />
-          <label htmlFor={label}>{fieldType.label}</label>
-        </div>
-      );
-    } else if (fieldType.type === "email") {
-      return (
-        <>
-          <input
-            type="email"
-            id={label}
-            name={label}
-            required={fieldType.required}
-          />
-          <label htmlFor={label}>{label}</label>
-        </>
-      );
+          </Form.Select>
+        );
+      case "radio":
+        return (
+          <>
+            {fieldOptions.map((option) => (
+              <Form.Check
+                key={option}
+                type="radio"
+                id={`${label}-${option}`}
+                label={option}
+                {...commonProps}
+                value={option}
+              />
+            ))}
+          </>
+        );
+      case "checkbox":
+        return (
+          <>
+            {fieldOptions.map((option) => (
+              <Form.Check
+                key={option}
+                type="checkbox"
+                id={`${label}-${option}`}
+                label={option}
+                {...commonProps}
+                value={option}
+              />
+            ))}
+          </>
+        );
+      default:
+        return null;
     }
   };
+
+  return (
+    <Form.Group className="mb-3" controlId={`form${label.replace(/\s+/g, '')}`}>
+      <Form.Label>{label}{required && <span className="text-danger">*</span>}</Form.Label>
+      {renderField()}
+    </Form.Group>
+  );
+};

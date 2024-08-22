@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import CreateFormField from './CreateFormField';
 import { useFormContext } from '../context/FormContext';
+import { Form, Button, Alert } from 'react-bootstrap';
 
 const CreateForm = () => {
-  const { currentForm, addForm, addFieldToCurrentForm, finishCurrentForm, removeFieldFromCurrentForm } = useFormContext();
+  const { currentForm, addForm, addFieldToCurrentForm, finishCurrentForm } = useFormContext();
   const [formName, setFormName] = useState('');
   const [error, setError] = useState('');
 
@@ -31,37 +32,30 @@ const CreateForm = () => {
     return (
       <div>
         <h2>Adding fields to: {currentForm.name}</h2>
-        <CreateFormField onAddField={addFieldToCurrentForm} />
-        <h3>Current Fields</h3>
-        {currentForm.fields.map((field, index) => (
-          <div key={index}>
-            <p>Label: {field.label}, Type: {field.formType}</p>
-            <button onClick={() => removeFieldFromCurrentForm(index)}>Delete</button>
-          </div>
-        ))}
-        {error && <p className="error">{error}</p>}
-        <button onClick={handleFinishForm}>Finish Form</button>
+        <CreateFormField 
+          onAddField={addFieldToCurrentForm} 
+          existingFields={currentForm.fields || []} // Provide an empty array as fallback
+        />
+        {error && <Alert variant="danger">{error}</Alert>}
+        <Button onClick={handleFinishForm}>Finish Form</Button>
       </div>
     );
   }
 
   return (
-    <div>
-      <h2>Create a New Form</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="formName">Form Name:</label>
-          <input
-            type="text"
-            id="formName"
-            value={formName}
-            onChange={(e) => setFormName(e.target.value)}
-          />
-        </div>
-        {error && <p className="error">{error}</p>}
-        <button type="submit">Create Form</button>
-      </form>
-    </div>
+    <Form onSubmit={handleSubmit}>
+      <Form.Group controlId="formName">
+        <Form.Label>Form Name:</Form.Label>
+        <Form.Control
+          type="text"
+          value={formName}
+          onChange={(e) => setFormName(e.target.value)}
+          placeholder="Enter form name"
+        />
+      </Form.Group>
+      {error && <Alert variant="danger">{error}</Alert>}
+      <Button type="submit">Create Form</Button>
+    </Form>
   );
 };
 
