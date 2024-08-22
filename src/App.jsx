@@ -10,11 +10,16 @@ function App() {
   return (
     <FormProvider>
       <Container>
-        <Row className="vh-100 d-flex justify-content-center align-items-center">
-          <Col md={8} lg={6} xs={12}>
-            <div className="border-3 border-primary border"></div>
-            <h1 className="text-center mb-4">Form Creator</h1>
+        <Row className="my-4">
+          <Col>
+            <h1 className="text-center">Form Creator</h1>
+          </Col>
+        </Row>
+        <Row>
+          <Col md={6}>
             <CreateForm />
+          </Col>
+          <Col md={6}>
             <FormList />
           </Col>
         </Row>

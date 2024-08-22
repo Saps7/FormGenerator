@@ -6,12 +6,19 @@ const CreateFormField = ({ onAddField, existingFields = [] }) => {
   const [fieldData, setFieldData] = useState({
     label: '',
     formType: '',
+    inputType: 'text',
     options: [],
     required: false,
     conditionalDisplay: {
       enabled: false,
       dependentOn: '',
       requiredValue: ''
+    },
+    validation: {
+      minValue: '',
+      maxValue: '',
+      allowedFileTypes: '',
+      maxFileSize: ''
     }
   });
   const [errors, setErrors] = useState({});
@@ -38,6 +45,17 @@ const CreateFormField = ({ onAddField, existingFields = [] }) => {
     }));
   };
 
+  const handleValidationChange = (e) => {
+    const { name, value } = e.target;
+    setFieldData(prevData => ({
+      ...prevData,
+      validation: {
+        ...prevData.validation,
+        [name]: value
+      }
+    }));
+  };
+
   const validateField = () => {
     let newErrors = {};
     if (!fieldData.label.trim()) {
@@ -60,12 +78,19 @@ const CreateFormField = ({ onAddField, existingFields = [] }) => {
       setFieldData({
         label: '',
         formType: '',
+        inputType: 'text',
         options: [],
         required: false,
         conditionalDisplay: {
           enabled: false,
           dependentOn: '',
           requiredValue: ''
+        },
+        validation: {
+          minValue: '',
+          maxValue: '',
+          allowedFileTypes: '',
+          maxFileSize: ''
         }
       });
       setErrors({});
@@ -96,13 +121,91 @@ const CreateFormField = ({ onAddField, existingFields = [] }) => {
           isInvalid={!!errors.formType}
         >
           <option value="">Select a field type</option>
-          <option value="text">Text input</option>
+          <option value="input">Input</option>
+          <option value="textarea">Textarea</option>
           <option value="dropdown">Dropdown</option>
           <option value="checkbox">Checkbox</option>
           <option value="radio">Radio button</option>
+          <option value="file">File upload</option>
         </Form.Control>
         <Form.Control.Feedback type="invalid">{errors.formType}</Form.Control.Feedback>
       </Form.Group>
+
+      {fieldData.formType === 'input' && (
+        <Form.Group controlId="inputType">
+          <Form.Label>Input Type:</Form.Label>
+          <Form.Control
+            as="select"
+            name="inputType"
+            value={fieldData.inputType}
+            onChange={handleChange}
+          >
+            <option value="text">Text</option>
+            <option value="email">Email</option>
+            <option value="tel">Phone Number</option>
+            <option value="number">Number</option>
+            <option value="date">Date</option>
+          </Form.Control>
+        </Form.Group>
+      )}
+
+      {fieldData.formType === 'input' && fieldData.inputType === 'number' && (
+        <Row>
+          <Col>
+            <Form.Group controlId="minValue">
+              <Form.Label>Minimum Value:</Form.Label>
+              <Form.Control
+                type="number"
+                name="minValue"
+                value={fieldData.validation.minValue}
+                onChange={handleValidationChange}
+              />
+            </Form.Group>
+          </Col>
+          <Col>
+            <Form.Group controlId="maxValue">
+              <Form.Label>Maximum Value:</Form.Label>
+              <Form.Control
+                type="number"
+                name="maxValue"
+                value={fieldData.validation.maxValue}
+                onChange={handleValidationChange}
+              />
+            </Form.Group>
+          </Col>
+        </Row>
+      )}
+
+      {fieldData.formType === 'file' && (
+        <Row>
+          <Col>
+            <Form.Group controlId="allowedFileTypes">
+              <Form.Label>Allowed File Types:</Form.Label>
+              <Form.Control
+                type="text"
+                name="allowedFileTypes"
+                value={fieldData.validation.allowedFileTypes}
+                onChange={handleValidationChange}
+                placeholder="e.g: pdf, doc, docx"
+              />
+              <Form.Text className="text-muted">
+                Enter file extensions separated by commas (e.g: pdf,doc,docx)
+              </Form.Text>
+            </Form.Group>
+          </Col>
+          <Col>
+            <Form.Group controlId="maxFileSize">
+              <Form.Label>Max File Size (in MB):</Form.Label>
+              <Form.Control
+                type="number"
+                name="maxFileSize"
+                value={fieldData.validation.maxFileSize}
+                onChange={handleValidationChange}
+              />
+            </Form.Group>
+          </Col>
+        </Row>
+      )}
 
       <Form.Group controlId="required">
         <Form.Check

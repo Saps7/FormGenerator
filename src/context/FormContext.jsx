@@ -1,4 +1,4 @@
-import { createContext, useContext } from 'react';
+import { createContext, useContext, useState } from 'react';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import PropTypes from 'prop-types';
 
@@ -6,50 +6,44 @@ const FormContext = createContext();
 
 export const FormProvider = ({ children }) => {
   const [forms, setForms] = useLocalStorage('forms', []);
-  const [currentForm, setCurrentForm] = useLocalStorage('currentForm', null);
+  const [currentForm, setCurrentForm] = useState(null);
 
   const addForm = (formName) => {
     const newForm = { id: Date.now(), name: formName, fields: [] };
-    setForms([...forms, newForm]);
     setCurrentForm(newForm);
   };
 
   const addFieldToCurrentForm = (field) => {
     if (currentForm) {
-      const updatedFields = [...currentForm.fields, field];
-      const updatedCurrentForm = { ...currentForm, fields: updatedFields };
-      setCurrentForm(updatedCurrentForm);
-      
-      setForms(prevForms => 
-        prevForms.map(form => 
-          form.id === currentForm.id ? updatedCurrentForm : form
-        )
-      );
+      setCurrentForm(prevForm => ({
+        ...prevForm,
+        fields: [...prevForm.fields, field]
+      }));
     }
   };
 
   const removeFieldFromCurrentForm = (index) => {
     if (currentForm) {
-      const updatedFields = currentForm.fields.filter((_, i) => i !== index);
-      const updatedCurrentForm = { ...currentForm, fields: updatedFields };
-      setCurrentForm(updatedCurrentForm);
-      
-      setForms(prevForms => 
-        prevForms.map(form => 
-          form.id === currentForm.id ? updatedCurrentForm : form
-        )
-      );
+      setCurrentForm(prevForm => ({
+        ...prevForm,
+        fields: prevForm.fields.filter((_, i) => i !== index)
+      }));
+    }
+  };
+
+  const finishCurrentForm = () => {
+    if (currentForm) {
+      setForms(prevForms => [...prevForms, currentForm]);
+      setCurrentForm(null);
     }
   };
 
   const deleteForm = (formId) => {
     setForms(prevForms => prevForms.filter(form => form.id !== formId));
-    if (currentForm && currentForm.id === formId) {
-      setCurrentForm(null);
-    }
   };
 
-  const finishCurrentForm = () => {
+  // New function to remove the current form
+  const removeCurrentForm = () => {
     setCurrentForm(null);
   };
 
@@ -61,7 +55,8 @@ export const FormProvider = ({ children }) => {
       addFieldToCurrentForm,
       removeFieldFromCurrentForm,
       finishCurrentForm,
-      deleteForm
+      deleteForm,
+      removeCurrentForm // Add this new function to the context
     }}>
       {children}
     </FormContext.Provider>
